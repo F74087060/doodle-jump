@@ -2,6 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+
+#include "define.h"
+#include "gamecontroller.h"
+
+class GameController;
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +24,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QGraphicsScene *scene;
+    QGraphicsView *view;
+
+    void initScene();
+    void startGame();
+
+    GameController *controller;
 };
 
 #endif // MAINWINDOW_H
