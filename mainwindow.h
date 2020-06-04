@@ -24,11 +24,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QGraphicsScene *scene;
-    QGraphicsView *view;
 
     void initScene();
     void startGame();
+
+    QGraphicsScene *scene;
+    QGraphicsView *view;
 
     GameController *controller;
 };

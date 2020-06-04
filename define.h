@@ -5,9 +5,15 @@
 #define VIEW_HEIGHT 800
 #define PLAYER_WIDTH 200
 
-enum freefall{
+enum verticalDirection{
     UP,
     DOWN
+};
+
+enum horizontalDirection{
+    LEFT,
+    RIGHT,
+    STOP
 };
 
 #endif // DEFINE_H

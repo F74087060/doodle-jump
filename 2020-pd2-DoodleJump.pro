@@ -28,13 +28,15 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     gamecontroller.cpp \
-    player.cpp
+    player.cpp \
+    platform.cpp
 
 HEADERS += \
         mainwindow.h \
     gamecontroller.h \
     player.h \
-    define.h
+    define.h \
+    platform.h
 
 FORMS += \
         mainwindow.ui

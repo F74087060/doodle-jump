@@ -2,5 +2,6 @@
     <qresource prefix="/resource"/>
     <qresource prefix="/">
         <file>resource/pngfind.com-minions-png-3009522.png</file>
+        <file>resource/pngguru.com.png</file>
     </qresource>
 </RCC>
