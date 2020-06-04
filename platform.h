@@ -5,13 +5,18 @@
 
 #include "define.h"
 
-class platform: public QObject, public QGraphicsPixmapItem
+class Platform: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    platform(qreal x, qreal y);
+    Platform();
+    void setCoordinate(qreal x, qreal y);
+    qreal getX();
+    qreal getY();
+    int getHeight();
 private:
     qreal xPos, yPos;
+    int platformHeight;
 };
 
 #endif // PLATFORM_H

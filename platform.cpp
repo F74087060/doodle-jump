@@ -1,12 +1,31 @@
 #include "platform.h"
 
-platform::platform(qreal x, qreal y)
+Platform::Platform()
 {
-    xPos=x;
-    yPos=y;
-
     QPixmap pix;
     pix.load(":/resource/pngguru.com.png");
 
-    setPixmap(pix.scaledToWidth(PLAYER_WIDTH));
+    setPixmap(pix.scaledToWidth(PLATFORM_WIDTH));
+    platformHeight=pix.scaledToWidth(PLATFORM_WIDTH).height();
+}
+
+void Platform::setCoordinate(qreal x, qreal y)
+{
+    xPos=x;
+    yPos=y;
+}
+
+qreal Platform::getX()
+{
+    return xPos;
+}
+
+qreal Platform::getY()
+{
+    return yPos;
+}
+
+int Platform::getHeight()
+{
+    return platformHeight;
 }

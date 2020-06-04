@@ -1,12 +1,16 @@
 #ifndef GAMECONTROLLER_H
 #define GAMECONTROLLER_H
 
+#include <ctime>
+#include <cstdlib>
+
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QTimer>
 
 #include "define.h"
 #include "player.h"
+#include "platform.h"
 
 class GameController: public QObject
 {
@@ -21,6 +25,7 @@ private:
     QTimer *timer;
 
     Player *player;
+    Platform *plat[10];
 protected:
     bool eventFilter(QObject *object, QEvent *event);
 };

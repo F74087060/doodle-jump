@@ -6,6 +6,8 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent):
     timer(new QTimer(this)),
     player(new Player(*this))
 {
+    srand(static_cast<unsigned>(time(nullptr)));
+
     scene.installEventFilter(this);
 
     timer->start(16);
@@ -13,6 +15,13 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent):
 
     player->setPos(VIEW_WIDTH/2-PLAYER_WIDTH/2,VIEW_HEIGHT/2);
     scene.addItem(player);
+
+    for(int i=0;i<8;i++){
+        plat[i]=new Platform();
+        plat[i]->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),rand()%(VIEW_HEIGHT-plat[i]->getHeight()));
+        plat[i]->setPos(plat[i]->getX(),plat[i]->getY());
+        scene.addItem(plat[i]);
+    }
 }
 
 void GameController::handleKeyPressed(QKeyEvent *event)
