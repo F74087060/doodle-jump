@@ -28,6 +28,7 @@ private:
     Platform *plat[10];
 protected:
     bool eventFilter(QObject *object, QEvent *event);
+    void advance(int phase);
 };
 
 #endif // GAMECONTROLLER_H

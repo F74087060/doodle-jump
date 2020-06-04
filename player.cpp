@@ -12,6 +12,8 @@ Player::Player(GameController &controller):
     connect(this, SIGNAL(leftSignal()), this, SLOT(moveLeft()));
     connect(this, SIGNAL(rightSignal()), this, SLOT(moveRight()));
 
+    setShapeMode(QGraphicsPixmapItem::HeuristicMaskShape);
+
     dy=initialVelocity;
     QPixmap pix;
     pix.load(":/resource/pngfind.com-minions-png-3009522.png");
@@ -32,6 +34,32 @@ void Player::moveDirection(horizontalDirection direction)
 bool Player::checkMovingDirection(horizontalDirection direction)
 {
     return (direction==movingDirection)?true:false;
+}
+
+bool Player::collidesWithPlatform()
+{
+    QList<QGraphicsItem *> collisions=this->collidingItems();
+    if(scene()->collidingItems(this).isEmpty()){
+        return false;
+    }
+    else{
+        foreach(QGraphicsItem *collidingItem, collisions){
+            if(collidingItem->data(TYPE)==PLATFORM)
+                return true;
+        }
+        return false;
+    }
+}
+
+double Player::getdy()
+{
+    return dy;
+}
+
+void Player::jump()
+{
+    setFall(UP);
+    dy=initialVelocity;
 }
 
 void Player::setFall(verticalDirection direction)
@@ -92,6 +120,9 @@ void Player::advance(int phase)
             break;
         case DOWN:
             emit downSignal();
+            if(collidesWithPlatform()){
+                jump();
+            }
             break;
     }
     switch(movingDirection){

@@ -17,4 +17,12 @@ enum horizontalDirection{
     STOP
 };
 
+enum Data{
+    TYPE
+};
+
+enum objectType{
+    PLATFORM
+};
+
 #endif // DEFINE_H

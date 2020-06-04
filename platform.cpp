@@ -2,11 +2,14 @@
 
 Platform::Platform()
 {
+    setShapeMode(QGraphicsPixmapItem::HeuristicMaskShape);
+
     QPixmap pix;
     pix.load(":/resource/pngguru.com.png");
 
     setPixmap(pix.scaledToWidth(PLATFORM_WIDTH));
     platformHeight=pix.scaledToWidth(PLATFORM_WIDTH).height();
+    setData(TYPE, PLATFORM);
 }
 
 void Platform::setCoordinate(qreal x, qreal y)

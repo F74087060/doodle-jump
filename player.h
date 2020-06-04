@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
 
 #include "define.h"
 
@@ -15,6 +16,9 @@ public:
 
     void moveDirection(horizontalDirection direction);
     bool checkMovingDirection(horizontalDirection direction);
+    bool collidesWithPlatform();
+    double getdy();
+    void jump();
 private:
     void setFall(verticalDirection direction);
 
@@ -23,9 +27,9 @@ private:
     int playerHeight;
     verticalDirection currentDirection;
     horizontalDirection movingDirection;
-    double dy=25;
 
     const double initialVelocity, gravity;
+    double dy=25;
 signals:
     void upSignal();
     void downSignal();
