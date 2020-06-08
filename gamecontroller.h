@@ -4,6 +4,8 @@
 #include <ctime>
 #include <cstdlib>
 
+#include <vector>
+
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QTimer>
@@ -25,7 +27,7 @@ private:
     QTimer *timer;
 
     Player *player;
-    Platform *plat[10];
+    std::vector<Platform *> plat;
 protected:
     bool eventFilter(QObject *object, QEvent *event);
     void advance(int phase);
