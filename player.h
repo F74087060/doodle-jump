@@ -24,7 +24,7 @@ private:
 
     GameController &controller;
 
-    int playerHeight;
+    qreal playerHeight;
     verticalDirection currentDirection;
     horizontalDirection movingDirection;
 

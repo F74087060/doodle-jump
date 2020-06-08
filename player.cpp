@@ -13,10 +13,11 @@ Player::Player(GameController &controller):
     connect(this, SIGNAL(rightSignal()), this, SLOT(moveRight()));
 
     setShapeMode(QGraphicsPixmapItem::HeuristicMaskShape);
+    setZValue(1);
 
     dy=initialVelocity;
     QPixmap pix;
-    pix.load(":/resource/pngfind.com-minions-png-3009522.png");
+    pix.load(PLAYER_RIGHT_PATH);
 
     setPixmap(pix.scaledToWidth(PLAYER_WIDTH));
     playerHeight=pix.scaledToWidth(PLAYER_WIDTH).height();
@@ -44,8 +45,9 @@ bool Player::collidesWithPlatform()
     }
     else{
         foreach(QGraphicsItem *collidingItem, collisions){
-            if(collidingItem->data(TYPE)==PLATFORM)
+            if(collidingItem->data(TYPE)==PLATFORM&&collidingItem->y()-playerHeight+OFFSET>=y()){
                 return true;
+            }
         }
         return false;
     }
@@ -95,6 +97,10 @@ void Player::moveDown()
 
 void Player::moveLeft()
 {
+    QPixmap pix;
+    pix.load(PLAYER_LEFT_PATH);
+    setPixmap(pix.scaledToWidth(PLAYER_WIDTH));
+
     setPos(x()-3,y());
     if(x()+PLAYER_WIDTH/2<=0){
         setPos(VIEW_WIDTH-PLAYER_WIDTH/2,y());
@@ -103,6 +109,10 @@ void Player::moveLeft()
 
 void Player::moveRight()
 {
+    QPixmap pix;
+    pix.load(PLAYER_RIGHT_PATH);
+    setPixmap(pix.scaledToWidth(PLAYER_WIDTH));
+
     setPos(x()+3,y());
     if(x()>=VIEW_WIDTH-PLAYER_WIDTH/2){
         setPos(-1*PLAYER_WIDTH/2,y());

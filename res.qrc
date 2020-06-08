@@ -1,7 +1,9 @@
 <RCC>
     <qresource prefix="/resource"/>
     <qresource prefix="/">
-        <file>resource/pngfind.com-minions-png-3009522.png</file>
-        <file>resource/pngguru.com.png</file>
+        <file>resource/background.png</file>
+        <file>resource/platform.png</file>
+        <file>resource/player_left.png</file>
+        <file>resource/player_right.png</file>
     </qresource>
 </RCC>

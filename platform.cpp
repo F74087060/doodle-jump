@@ -5,7 +5,7 @@ Platform::Platform()
     setShapeMode(QGraphicsPixmapItem::HeuristicMaskShape);
 
     QPixmap pix;
-    pix.load(":/resource/pngguru.com.png");
+    pix.load(PLATFORM_PATH);
 
     setPixmap(pix.scaledToWidth(PLATFORM_WIDTH));
     platformHeight=pix.scaledToWidth(PLATFORM_WIDTH).height();

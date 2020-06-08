@@ -31,5 +31,6 @@ void MainWindow::initScene()
 
 void MainWindow::startGame()
 {
+    scene->setBackgroundBrush(QBrush(QImage(BACKGROUND_PATH)));
     view->setScene(scene);
 }
