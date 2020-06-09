@@ -9,6 +9,7 @@
 
 #define BACKGROUND_PATH ":/resource/background.png"
 #define PLATFORM_PATH ":/resource/platform.png"
+#define BOOST_PLATFORM_PATH ":/resource/boostplatform.png"
 #define PLAYER_LEFT_PATH ":/resource/player_left.png"
 #define PLAYER_RIGHT_PATH ":/resource/player_right.png"
 
@@ -24,11 +25,17 @@ enum horizontalDirection{
 };
 
 enum Data{
-    TYPE
+    TYPE,
+    PLATFORM_TYPE
 };
 
 enum objectType{
     PLATFORM
+};
+
+enum platformType{
+    NORMAL,
+    BOOST
 };
 
 #endif // DEFINE_H

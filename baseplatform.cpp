@@ -1,15 +1,16 @@
 #include "baseplatform.h"
 
-BasePlatform::BasePlatform()
+BasePlatform::BasePlatform(platformType platType, objectType objType, QString resPath)
 {
     setShapeMode(QGraphicsPixmapItem::HeuristicMaskShape);
 
     QPixmap pix;
-    pix.load(PLATFORM_PATH);
+    pix.load(resPath);
 
     setPixmap(pix.scaledToWidth(PLATFORM_WIDTH));
     platformHeight=pix.scaledToWidth(PLATFORM_WIDTH).height();
-    setData(TYPE, PLATFORM);
+    setData(TYPE, objType);
+    setData(PLATFORM_TYPE, platType);
 }
 
 void BasePlatform::setCoordinate(qreal x, qreal y)
@@ -18,12 +19,12 @@ void BasePlatform::setCoordinate(qreal x, qreal y)
     yPos=y;
 }
 
-qreal BasePlatform::getX() const
+qreal BasePlatform::X() const
 {
     return xPos;
 }
 
-qreal BasePlatform::getY() const
+qreal BasePlatform::Y() const
 {
     return yPos;
 }

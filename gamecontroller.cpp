@@ -22,7 +22,7 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent):
     for(unsigned long i=0;i<8;i++){
         plat.push_back(new BasePlatform());
         plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),rand()%(VIEW_HEIGHT-plat.at(i)->getHeight()));
-        plat.at(i)->setPos(plat.at(i)->getX(),plat.at(i)->getY());
+        plat.at(i)->setPos(plat.at(i)->X(),plat.at(i)->Y());
         platformList.append(plat.at(i));
     }
     platformGroup=scene.createItemGroup(platformList);
@@ -75,7 +75,7 @@ void GameController::generatePlatform()
     for(unsigned long i=0;it!=plat.end();it++, i++){
         if(plat.at(i)->y()>VIEW_HEIGHT+40){
             plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),(rand()%40-40));
-            plat.at(i)->setPos(plat.at(i)->getX(),plat.at(i)->getY());
+            plat.at(i)->setPos(plat.at(i)->X(),plat.at(i)->Y());
         }
     }
 }

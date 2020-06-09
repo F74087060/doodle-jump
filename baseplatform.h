@@ -1,5 +1,5 @@
-#ifndef PLATFORM_H
-#define PLATFORM_H
+#ifndef BASEPLATFORM_H
+#define BASEPLATFORM_H
 
 #include <QGraphicsPixmapItem>
 
@@ -9,12 +9,12 @@ class BasePlatform: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    BasePlatform();
+    BasePlatform(platformType platType=NORMAL, objectType objType=PLATFORM, QString resPath=PLATFORM_PATH);
     void setCoordinate(qreal x, qreal y);
-    qreal getX() const;
-    qreal getY() const;
+    qreal X() const;
+    qreal Y() const;
     int getHeight() const;
-private:
+protected:
     qreal xPos, yPos;
     int platformHeight;
 };

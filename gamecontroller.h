@@ -14,6 +14,7 @@
 #include "define.h"
 #include "player.h"
 #include "baseplatform.h"
+#include "boostplatform.h"
 
 class GameController: public QObject
 {

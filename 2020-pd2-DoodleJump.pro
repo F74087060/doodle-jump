@@ -30,7 +30,7 @@ SOURCES += \
     gamecontroller.cpp \
     player.cpp \
     baseplatform.cpp \
-    platform.cpp
+    boostplatform.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -38,7 +38,7 @@ HEADERS += \
     player.h \
     define.h \
     baseplatform.h \
-    platform.h
+    boostplatform.h
 
 FORMS += \
         mainwindow.ui

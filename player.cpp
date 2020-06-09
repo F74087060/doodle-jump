@@ -48,7 +48,7 @@ bool Player::collidesWithPlatform()
         foreach(QGraphicsItem *collidingItem, collisions){
             if(collidingItem->data(TYPE)==PLATFORM&&collidingItem->y()-playerHeight+OFFSET>=y()){
                 distanceToGround=VIEW_HEIGHT-collidingItem->y();
-                previousY=static_cast<BasePlatform *>(collidingItem)->getY();
+                previousY=static_cast<BasePlatform *>(collidingItem)->Y();
                 return true;
             }
         }
