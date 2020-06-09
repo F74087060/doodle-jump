@@ -1,6 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <vector>
+#include <algorithm>
+
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
 
@@ -17,19 +20,24 @@ public:
     void moveDirection(horizontalDirection direction);
     bool checkMovingDirection(horizontalDirection direction);
     bool collidesWithPlatform();
-    double getdy();
+    double getDeltaY() const;
     void jump();
-private:
+    void setDeltaY(double value);
     void setFall(verticalDirection direction);
+    qreal getDistanceToGround() const;
+    verticalDirection getCurrentDirection() const;
+    qreal getPlayerHeight() const;
+    double previousY;
 
+private:
     GameController &controller;
 
-    qreal playerHeight;
+    qreal playerHeight, distanceToGround;
     verticalDirection currentDirection;
     horizontalDirection movingDirection;
 
     const double initialVelocity, gravity;
-    double dy=25;
+    double deltaY=25;
 signals:
     void upSignal();
     void downSignal();

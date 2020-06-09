@@ -1,4 +1,5 @@
 #include "gamecontroller.h"
+#include <QDebug>
 
 GameController::GameController(QGraphicsScene &scene, QObject *parent):
     QObject(parent),
@@ -12,16 +13,19 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent):
 
     timer->start(16);
     connect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
 
     player->setPos(VIEW_WIDTH/2-PLAYER_WIDTH/2,VIEW_HEIGHT/2);
     scene.addItem(player);
 
     for(unsigned long i=0;i<8;i++){
-        plat.push_back(new Platform());
+        plat.push_back(new BasePlatform());
         plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),rand()%(VIEW_HEIGHT-plat.at(i)->getHeight()));
         plat.at(i)->setPos(plat.at(i)->getX(),plat.at(i)->getY());
-        scene.addItem(plat.at(i));
+        platformList.append(plat.at(i));
     }
+    platformGroup=scene.createItemGroup(platformList);
 }
 
 void GameController::handleKeyPressed(QKeyEvent *event)
@@ -47,6 +51,32 @@ void GameController::handleKeyRelease(QKeyEvent *event)
             if(player->checkMovingDirection(RIGHT))
                 player->moveDirection(STOP);
             break;
+    }
+}
+
+void GameController::movePlatform()
+{
+    if(player->y()<VIEW_HEIGHT/2-player->getPlayerHeight()){
+        if(player->y()<VIEW_HEIGHT/2-player->getPlayerHeight()){
+            player->setY(VIEW_HEIGHT/2-player->getPlayerHeight());
+        }
+        std::vector<BasePlatform *>::iterator it=plat.begin();
+        for(unsigned long i=0;it!=plat.end();it++, i++){
+            if(player->getCurrentDirection()==UP){
+                    plat.at(i)->setY(plat.at(i)->y()+player->getDeltaY());
+            }
+        }
+    }
+}
+
+void GameController::generatePlatform()
+{
+    std::vector<BasePlatform *>::iterator it=plat.begin();
+    for(unsigned long i=0;it!=plat.end();it++, i++){
+        if(plat.at(i)->y()>VIEW_HEIGHT+40){
+            plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),(rand()%40-40));
+            plat.at(i)->setPos(plat.at(i)->getX(),plat.at(i)->getY());
+        }
     }
 }
 

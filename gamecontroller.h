@@ -9,25 +9,32 @@
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <QList>
 
 #include "define.h"
 #include "player.h"
-#include "platform.h"
+#include "baseplatform.h"
 
 class GameController: public QObject
 {
     Q_OBJECT
 public:
     GameController(QGraphicsScene &scene, QObject *parent=nullptr);
+    QGraphicsItemGroup *platformGroup;
+
+    std::vector<BasePlatform *> plat;
 private:
     void handleKeyPressed(QKeyEvent *event);
     void handleKeyRelease(QKeyEvent *event);
 
     QGraphicsScene &scene;
+    QList<QGraphicsItem *> platformList;
     QTimer *timer;
 
     Player *player;
-    std::vector<Platform *> plat;
+public slots:
+    void movePlatform();
+    void generatePlatform();
 protected:
     bool eventFilter(QObject *object, QEvent *event);
     void advance(int phase);

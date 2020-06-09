@@ -29,6 +29,7 @@ SOURCES += \
         mainwindow.cpp \
     gamecontroller.cpp \
     player.cpp \
+    baseplatform.cpp \
     platform.cpp
 
 HEADERS += \
@@ -36,6 +37,7 @@ HEADERS += \
     gamecontroller.h \
     player.h \
     define.h \
+    baseplatform.h \
     platform.h
 
 FORMS += \

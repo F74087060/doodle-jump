@@ -1,11 +1,12 @@
 #include "player.h"
+#include "gamecontroller.h"
 
 Player::Player(GameController &controller):
     controller(controller),
     currentDirection(DOWN),
     movingDirection(STOP),
     initialVelocity(20),
-    gravity(0.5)
+    gravity(0.65)
 {
     connect(this, SIGNAL(upSignal()), this, SLOT(moveUp()));
     connect(this, SIGNAL(downSignal()), this, SLOT(moveDown()));
@@ -15,7 +16,7 @@ Player::Player(GameController &controller):
     setShapeMode(QGraphicsPixmapItem::HeuristicMaskShape);
     setZValue(1);
 
-    dy=initialVelocity;
+    deltaY=initialVelocity;
     QPixmap pix;
     pix.load(PLAYER_RIGHT_PATH);
 
@@ -46,6 +47,8 @@ bool Player::collidesWithPlatform()
     else{
         foreach(QGraphicsItem *collidingItem, collisions){
             if(collidingItem->data(TYPE)==PLATFORM&&collidingItem->y()-playerHeight+OFFSET>=y()){
+                distanceToGround=VIEW_HEIGHT-collidingItem->y();
+                previousY=static_cast<BasePlatform *>(collidingItem)->getY();
                 return true;
             }
         }
@@ -53,15 +56,15 @@ bool Player::collidesWithPlatform()
     }
 }
 
-double Player::getdy()
+double Player::getDeltaY() const
 {
-    return dy;
+    return deltaY;
 }
 
 void Player::jump()
 {
     setFall(UP);
-    dy=initialVelocity;
+    deltaY=initialVelocity;
 }
 
 void Player::setFall(verticalDirection direction)
@@ -75,23 +78,43 @@ void Player::setFall(verticalDirection direction)
     currentDirection=direction;
 }
 
+qreal Player::getDistanceToGround() const
+{
+    return distanceToGround;
+}
+
+verticalDirection Player::getCurrentDirection() const
+{
+    return currentDirection;
+}
+
+qreal Player::getPlayerHeight() const
+{
+    return playerHeight;
+}
+
+void Player::setDeltaY(double value)
+{
+    deltaY = value;
+}
+
 void Player::moveUp()
 {
-    dy-=gravity;
-    setPos(x(), y()-dy);
-    if(dy<=0){
+    deltaY-=gravity;
+    setPos(x(), y()-deltaY);
+    if(deltaY<=0){
         setFall(DOWN);
-        dy=0;
+        deltaY=0;
     }
 }
 
 void Player::moveDown()
 {
-    dy+=(gravity/2.5);
-    setPos(x(), y()+dy);
+    deltaY+=(gravity);
+    setPos(x(), y()+deltaY);
     if(y()+playerHeight>VIEW_HEIGHT){
         setFall(UP);
-        dy=initialVelocity;
+        deltaY=initialVelocity;
     }
 }
 
@@ -101,7 +124,7 @@ void Player::moveLeft()
     pix.load(PLAYER_LEFT_PATH);
     setPixmap(pix.scaledToWidth(PLAYER_WIDTH));
 
-    setPos(x()-3,y());
+    setPos(x()-8,y());
     if(x()+PLAYER_WIDTH/2<=0){
         setPos(VIEW_WIDTH-PLAYER_WIDTH/2,y());
     }
@@ -113,7 +136,7 @@ void Player::moveRight()
     pix.load(PLAYER_RIGHT_PATH);
     setPixmap(pix.scaledToWidth(PLAYER_WIDTH));
 
-    setPos(x()+3,y());
+    setPos(x()+8,y());
     if(x()>=VIEW_WIDTH-PLAYER_WIDTH/2){
         setPos(-1*PLAYER_WIDTH/2,y());
     }
@@ -145,5 +168,4 @@ void Player::advance(int phase)
         case STOP:
             break;
     }
-
 }
