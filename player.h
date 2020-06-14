@@ -38,6 +38,7 @@ private:
 
     const double initialVelocity, gravity;
     double deltaY=25;
+    int boostFactor=1;
 signals:
     void upSignal();
     void downSignal();

@@ -49,6 +49,8 @@ bool Player::collidesWithPlatform()
             if(collidingItem->data(TYPE)==PLATFORM&&collidingItem->y()-playerHeight+OFFSET>=y()){
                 distanceToGround=VIEW_HEIGHT-collidingItem->y();
                 previousY=static_cast<BasePlatform *>(collidingItem)->Y();
+                if(collidingItem->data(TYPE)==PLATFORM&&collidingItem->data(PLATFORM_TYPE)==BOOST)
+                    boostFactor=2;
                 return true;
             }
         }
@@ -64,7 +66,7 @@ double Player::getDeltaY() const
 void Player::jump()
 {
     setFall(UP);
-    deltaY=initialVelocity;
+    deltaY=initialVelocity*boostFactor;
 }
 
 void Player::setFall(verticalDirection direction)
@@ -116,6 +118,7 @@ void Player::moveDown()
         setFall(UP);
         deltaY=initialVelocity;
     }
+    boostFactor=1;
 }
 
 void Player::moveLeft()

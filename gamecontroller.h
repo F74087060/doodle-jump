@@ -13,8 +13,7 @@
 
 #include "define.h"
 #include "player.h"
-#include "baseplatform.h"
-#include "boostplatform.h"
+#include "randomplatform.h"
 
 class GameController: public QObject
 {
@@ -28,9 +27,12 @@ private:
     void handleKeyPressed(QKeyEvent *event);
     void handleKeyRelease(QKeyEvent *event);
 
+    void initPlayer();
+    void initPlatform();
+
     QGraphicsScene &scene;
     QList<QGraphicsItem *> platformList;
-    QTimer *timer;
+    QTimer *timer, *timer2;
 
     Player *player;
 public slots:

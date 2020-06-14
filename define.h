@@ -26,16 +26,19 @@ enum horizontalDirection{
 
 enum Data{
     TYPE,
-    PLATFORM_TYPE
+    PLATFORM_TYPE,
+    NUMBER_OF_DATA
 };
 
 enum objectType{
-    PLATFORM
+    PLATFORM,
+    NUMBER_OF_OBJECT
 };
 
 enum platformType{
     NORMAL,
-    BOOST
+    BOOST,
+    NUMBER_OF_PLATFORM
 };
 
 #endif // DEFINE_H

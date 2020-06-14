@@ -7,6 +7,9 @@ class BoostPlatform: public BasePlatform
 {
 public:
     BoostPlatform();
+    virtual ~BoostPlatform();
+
+    void setPlatform();
 };
 
 #endif // PLATFORM_H

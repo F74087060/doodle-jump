@@ -1,5 +1,4 @@
 #include "gamecontroller.h"
-#include <QDebug>
 
 GameController::GameController(QGraphicsScene &scene, QObject *parent):
     QObject(parent),
@@ -16,16 +15,8 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent):
     connect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
     connect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
 
-    player->setPos(VIEW_WIDTH/2-PLAYER_WIDTH/2,VIEW_HEIGHT/2);
-    scene.addItem(player);
-
-    for(unsigned long i=0;i<8;i++){
-        plat.push_back(new BasePlatform());
-        plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),rand()%(VIEW_HEIGHT-plat.at(i)->getHeight()));
-        plat.at(i)->setPos(plat.at(i)->X(),plat.at(i)->Y());
-        platformList.append(plat.at(i));
-    }
-    platformGroup=scene.createItemGroup(platformList);
+    initPlayer();
+    initPlatform();
 }
 
 void GameController::handleKeyPressed(QKeyEvent *event)
@@ -54,6 +45,26 @@ void GameController::handleKeyRelease(QKeyEvent *event)
     }
 }
 
+void GameController::initPlayer()
+{
+    player->setPos(VIEW_WIDTH/2-PLAYER_WIDTH/2,VIEW_HEIGHT/2);
+    scene.addItem(player);
+}
+
+void GameController::initPlatform()
+{
+    BasePlatform *platformPointer;
+    for(unsigned long i=0;i<128;i++){
+        platformPointer=randomPlatform();
+        plat.push_back(platformPointer);
+        plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH)
+                                  ,(VIEW_HEIGHT-plat.at(i)->getHeight())-static_cast<int>(i)*((VIEW_HEIGHT-plat.at(i)->getHeight())/8));
+        plat.at(i)->setPos(plat.at(i)->X(),plat.at(i)->Y());
+        platformList.append(plat.at(i));
+    }
+    platformGroup=scene.createItemGroup(platformList);
+}
+
 void GameController::movePlatform()
 {
     if(player->y()<VIEW_HEIGHT/2-player->getPlayerHeight()){
@@ -73,11 +84,16 @@ void GameController::generatePlatform()
 {
     std::vector<BasePlatform *>::iterator it=plat.begin();
     for(unsigned long i=0;it!=plat.end();it++, i++){
-        if(plat.at(i)->y()>VIEW_HEIGHT+40){
-            plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),(rand()%40-40));
+        if(plat.at(i)->y()>=VIEW_HEIGHT){
+            platformList.removeAt(static_cast<int>(i));
+            plat.at(i)=randomPlatform();
+            plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),-1*15*(VIEW_HEIGHT-(VIEW_HEIGHT-plat.at(i)->getHeight())/8));
             plat.at(i)->setPos(plat.at(i)->X(),plat.at(i)->Y());
+            platformList.append(plat.at(i));
         }
     }
+    scene.destroyItemGroup(platformGroup);
+    platformGroup=scene.createItemGroup(platformList);
 }
 
 bool GameController::eventFilter(QObject *object, QEvent *event)
