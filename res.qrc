@@ -12,5 +12,6 @@
         <file>resource/mainmenu.png</file>
         <file>resource/play.png</file>
         <file>resource/playhover.png</file>
+        <file>resource/ghost.png</file>
     </qresource>
 </RCC>

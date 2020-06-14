@@ -19,7 +19,7 @@ public:
 
     void moveDirection(horizontalDirection direction);
     bool checkMovingDirection(horizontalDirection direction);
-    bool collidesWithPlatform();
+    bool collidesWithPlayer();
     double getDeltaY() const;
     void jump();
     void setDeltaY(double value);

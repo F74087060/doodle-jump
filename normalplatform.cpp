@@ -16,6 +16,5 @@ void NormalPlatform::setPlatform()
 
     setPixmap(pix.scaledToWidth(PLATFORM_WIDTH));
     platformHeight=pix.scaledToWidth(PLATFORM_WIDTH).height();
-    setData(TYPE, PLATFORM);
     setData(PLATFORM_TYPE, NORMAL);
 }

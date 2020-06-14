@@ -3,6 +3,7 @@
 BasePlatform::BasePlatform()
 {
     setShapeMode(QGraphicsPixmapItem::HeuristicMaskShape);
+    setData(TYPE, PLATFORM);
 }
 
 BasePlatform::~BasePlatform()

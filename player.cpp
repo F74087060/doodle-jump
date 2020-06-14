@@ -38,7 +38,7 @@ bool Player::checkMovingDirection(horizontalDirection direction)
     return (direction==movingDirection)?true:false;
 }
 
-bool Player::collidesWithPlatform()
+bool Player::collidesWithPlayer()
 {
     QList<QGraphicsItem *> collisions=this->collidingItems();
     if(scene()->collidingItems(this).isEmpty()){
@@ -46,6 +46,9 @@ bool Player::collidesWithPlatform()
     }
     else{
         foreach(QGraphicsItem *collidingItem, collisions){
+            if(collidingItem->data(TYPE)==HAZARD){
+                emit controller.gameOver();
+            }
             if(collidingItem->data(TYPE)==PLATFORM&&collidingItem->y()-playerHeight+OFFSET>=y()){
                     distanceToGround=VIEW_HEIGHT-collidingItem->y();
                     previousY=static_cast<BasePlatform *>(collidingItem)->Y();
@@ -159,7 +162,7 @@ void Player::advance(int phase)
             break;
         case DOWN:
             emit downSignal();
-            if(collidesWithPlatform()){
+            if(collidesWithPlayer()){
                 jump();
             }
             break;

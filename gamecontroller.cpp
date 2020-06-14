@@ -1,4 +1,5 @@
 #include "gamecontroller.h"
+#include <QDebug>
 
 GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObject *parent):
     QObject(parent),
@@ -7,7 +8,8 @@ GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObje
     gameOverScene(new QGraphicsScene(this)),
     view(view),
     timer(new QTimer(this)),
-    player(new Player(*this))
+    player(new Player(*this)),
+    ghost(new Ghost())
 {
     srand(static_cast<unsigned>(time(nullptr)));
 
@@ -15,13 +17,18 @@ GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObje
 
     timer->start(16);
     connect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
-    connect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(moveCamera()));
     connect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(moveGhost()));
+    connect(timer, SIGNAL(timeout()), ghost, SLOT(moveLeft()));
+    connect(timer, SIGNAL(timeout()), ghost, SLOT(moveRight()));
     connect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
 
     initPlayer();
     initPlatform();
     initGameOverScene();
+    scene.addItem(ghost);
+    ghost->setPos(VIEW_WIDTH/2-GHOST_WIDTH/2,100);
 }
 
 void GameController::handleKeyPressed(QKeyEvent *event)
@@ -36,7 +43,7 @@ void GameController::handleKeyPressed(QKeyEvent *event)
         case Qt::Key_Escape: case Qt::Key_P:
             if(paused==false){
                 disconnect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
-                disconnect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
+                disconnect(timer, SIGNAL(timeout()), this, SLOT(moveCamera()));
                 disconnect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
                 disconnect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
 
@@ -44,7 +51,7 @@ void GameController::handleKeyPressed(QKeyEvent *event)
             }
             else{
                 connect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
-                connect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
+                connect(timer, SIGNAL(timeout()), this, SLOT(moveCamera()));
                 connect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
                 connect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
 
@@ -93,7 +100,7 @@ void GameController::initGameOverScene()
     gameOverScene->setBackgroundBrush(QBrush(QImage(BACKGROUND_PATH)));
 }
 
-void GameController::movePlatform()
+void GameController::moveCamera()
 {
     if(player->y()<VIEW_HEIGHT/2-player->getPlayerHeight()){
         if(player->y()<VIEW_HEIGHT/2-player->getPlayerHeight()){
@@ -102,9 +109,10 @@ void GameController::movePlatform()
         std::vector<BasePlatform *>::iterator it=plat.begin();
         for(unsigned long i=0;it!=plat.end();it++, i++){
             if(player->getCurrentDirection()==UP){
-                    plat.at(i)->setY(plat.at(i)->y()+player->getDeltaY());
+                plat.at(i)->setY(plat.at(i)->y()+player->getDeltaY());
             }
         }
+        ghost->setY(ghost->y()+player->getDeltaY());
     }
 }
 
@@ -123,10 +131,46 @@ void GameController::generatePlatform()
     platformGroup=scene.createItemGroup(platformList);
 }
 
+void GameController::moveGhost()
+{
+    switch(ghost->currentDirection){
+        case LEFT:
+            emit ghost->leftSignal();
+            break;
+        case RIGHT:
+            emit ghost->rightSignal();
+            break;
+        default:
+            break;
+    }
+
+    if(ghost->now<ghost->minX){
+        ghost->currentDirection=RIGHT;
+    }
+    else if(ghost->now>ghost->maxX){
+        ghost->currentDirection=LEFT;
+    }
+
+    if(ghost->now>0){
+        ghost->setX(ghost->x()-1);
+    }
+    else {
+        ghost->setX(ghost->x()+1);
+    }
+
+    if(ghost->x()>=VIEW_WIDTH-GHOST_WIDTH/2){
+        ghost->setX(-1*GHOST_WIDTH/2);
+    }
+    else if(ghost->x()+GHOST_WIDTH/2<=0){
+        ghost->setX(VIEW_WIDTH-GHOST_WIDTH/2);
+    }
+
+}
+
 void GameController::gameOverSlot()
 {
     disconnect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
-    disconnect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
+    disconnect(timer, SIGNAL(timeout()), this, SLOT(moveCamera()));
     disconnect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
 
     Button *menuButton = new Button(MENU_PATH, MENU_HOVER_PATH);

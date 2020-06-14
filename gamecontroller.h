@@ -18,6 +18,7 @@
 #include "randomplatform.h"
 #include "button.h"
 #include "mainwindow.h"
+#include "ghost.h"
 
 class GameController: public QObject
 {
@@ -41,13 +42,15 @@ private:
     QTimer *timer, *timer2;
 
     Player *player;
+    Ghost *ghost;
 
     bool paused=false;
 signals:
     void gameOver();
 public slots:
-    void movePlatform();
+    void moveCamera();
     void generatePlatform();
+    void moveGhost();
     void gameOverSlot();
 protected:
     bool eventFilter(QObject *object, QEvent *event);
