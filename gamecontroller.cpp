@@ -1,8 +1,11 @@
 #include "gamecontroller.h"
 
-GameController::GameController(QGraphicsScene &scene, QObject *parent):
+GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObject *parent):
     QObject(parent),
     scene(scene),
+    pauseScene(new QGraphicsScene(this)),
+    gameOverScene(new QGraphicsScene(this)),
+    view(view),
     timer(new QTimer(this)),
     player(new Player(*this))
 {
@@ -18,6 +21,7 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent):
 
     initPlayer();
     initPlatform();
+    initGameOverScene();
 }
 
 void GameController::handleKeyPressed(QKeyEvent *event)
@@ -28,6 +32,24 @@ void GameController::handleKeyPressed(QKeyEvent *event)
             break;
         case Qt::Key_Right:
             player->moveDirection(RIGHT);
+            break;
+        case Qt::Key_Escape: case Qt::Key_P:
+            if(paused==false){
+                disconnect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
+                disconnect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
+                disconnect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
+                disconnect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
+
+                paused=true;
+            }
+            else{
+                connect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
+                connect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
+                connect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
+                connect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
+
+                paused=false;
+            }
             break;
     }
 }
@@ -66,6 +88,11 @@ void GameController::initPlatform()
     platformGroup=scene.createItemGroup(platformList);
 }
 
+void GameController::initGameOverScene()
+{
+    gameOverScene->setBackgroundBrush(QBrush(QImage(BACKGROUND_PATH)));
+}
+
 void GameController::movePlatform()
 {
     if(player->y()<VIEW_HEIGHT/2-player->getPlayerHeight()){
@@ -102,7 +129,13 @@ void GameController::gameOverSlot()
     disconnect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
     disconnect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
 
-    connect(this, SIGNAL(gameOver()), QApplication::activeWindow(), SLOT(close()));
+    Button *menuButton = new Button(MENU_PATH, MENU_HOVER_PATH);
+    gameOverScene->addItem(menuButton);
+    menuButton->setPos(3*VIEW_WIDTH/4-BUTTON_WIDTH/2, 575);
+
+    connect(menuButton, SIGNAL(clicked()), QApplication::activeWindow(), SLOT(showMainMenu()));
+
+    view.setScene(gameOverScene);
 }
 
 bool GameController::eventFilter(QObject *object, QEvent *event)

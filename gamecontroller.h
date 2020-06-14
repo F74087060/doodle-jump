@@ -9,19 +9,21 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QTimer>
 #include <QList>
 
 #include "define.h"
 #include "player.h"
 #include "randomplatform.h"
+#include "button.h"
 #include "mainwindow.h"
 
 class GameController: public QObject
 {
     Q_OBJECT
 public:
-    GameController(QGraphicsScene &scene, QObject *parent=nullptr);
+    GameController(QGraphicsScene &scene, QGraphicsView &view, QObject *parent=nullptr);
     QGraphicsItemGroup *platformGroup;
 
     std::vector<BasePlatform *> plat;
@@ -31,12 +33,16 @@ private:
 
     void initPlayer();
     void initPlatform();
+    void initGameOverScene();
 
-    QGraphicsScene &scene;
+    QGraphicsScene &scene, *pauseScene, *gameOverScene;
+    QGraphicsView &view;
     QList<QGraphicsItem *> platformList;
     QTimer *timer, *timer2;
 
     Player *player;
+
+    bool paused=false;
 signals:
     void gameOver();
 public slots:

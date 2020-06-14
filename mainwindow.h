@@ -21,13 +21,17 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void changeScene(QGraphicsScene *scene);
+public slots:
+    void showMainMenu();
+    void newGame();
 private:
     Ui::MainWindow *ui;
 
     void initScene();
     void startGame();
 
-    QGraphicsScene *scene;
+    QGraphicsScene *scene, *sceneMain;
     QGraphicsView *view;
 
     GameController *controller;

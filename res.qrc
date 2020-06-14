@@ -7,5 +7,10 @@
         <file>resource/player_right.png</file>
         <file>resource/boostplatform.png</file>
         <file>resource/stopplatform.png</file>
+        <file>resource/menu.png</file>
+        <file>resource/menuhover.png</file>
+        <file>resource/mainmenu.png</file>
+        <file>resource/play.png</file>
+        <file>resource/playhover.png</file>
     </qresource>
 </RCC>

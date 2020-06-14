@@ -33,7 +33,8 @@ SOURCES += \
     boostplatform.cpp \
     randomplatform.cpp \
     stopplatform.cpp \
-    normalplatform.cpp
+    normalplatform.cpp \
+    button.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,7 +45,8 @@ HEADERS += \
     boostplatform.h \
     normalplatform.h \
     randomplatform.h \
-    stopplatform.h
+    stopplatform.h \
+    button.h
 
 FORMS += \
         mainwindow.ui
