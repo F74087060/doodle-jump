@@ -6,7 +6,6 @@
 #include <QGraphicsView>
 
 #include "define.h"
-#include "gamecontroller.h"
 
 class GameController;
 

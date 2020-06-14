@@ -4,6 +4,7 @@
 #include "define.h"
 #include "baseplatform.h"
 #include "normalplatform.h"
+#include "stopplatform.h"
 #include "boostplatform.h"
 
 BasePlatform *randomPlatform();

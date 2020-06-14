@@ -5,10 +5,12 @@
 #define VIEW_HEIGHT 800
 #define PLAYER_WIDTH 120
 #define PLATFORM_WIDTH 120
+#define PLATFORM_ONSCREEN 6
 #define OFFSET 20
 
 #define BACKGROUND_PATH ":/resource/background.png"
 #define PLATFORM_PATH ":/resource/platform.png"
+#define STOP_PLATFORM_PATH ":/resource/stopplatform.png"
 #define BOOST_PLATFORM_PATH ":/resource/boostplatform.png"
 #define PLAYER_LEFT_PATH ":/resource/player_left.png"
 #define PLAYER_RIGHT_PATH ":/resource/player_right.png"
@@ -38,6 +40,7 @@ enum objectType{
 enum platformType{
     NORMAL,
     BOOST,
+    DROP,
     NUMBER_OF_PLATFORM
 };
 

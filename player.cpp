@@ -47,10 +47,14 @@ bool Player::collidesWithPlatform()
     else{
         foreach(QGraphicsItem *collidingItem, collisions){
             if(collidingItem->data(TYPE)==PLATFORM&&collidingItem->y()-playerHeight+OFFSET>=y()){
-                distanceToGround=VIEW_HEIGHT-collidingItem->y();
-                previousY=static_cast<BasePlatform *>(collidingItem)->Y();
-                if(collidingItem->data(TYPE)==PLATFORM&&collidingItem->data(PLATFORM_TYPE)==BOOST)
-                    boostFactor=2;
+                    distanceToGround=VIEW_HEIGHT-collidingItem->y();
+                    previousY=static_cast<BasePlatform *>(collidingItem)->Y();
+                    if(collidingItem->data(PLATFORM_TYPE)==DROP)
+                        boostFactor=0;
+                    else if(collidingItem->data(PLATFORM_TYPE)==BOOST)
+                        boostFactor=2;
+                    else
+                        boostFactor=1;
                 return true;
             }
         }
@@ -115,8 +119,7 @@ void Player::moveDown()
     deltaY+=(gravity);
     setPos(x(), y()+deltaY);
     if(y()+playerHeight>VIEW_HEIGHT){
-        setFall(UP);
-        deltaY=initialVelocity;
+        emit controller.gameOver();
     }
     boostFactor=1;
 }

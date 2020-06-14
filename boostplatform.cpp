@@ -1,6 +1,7 @@
 #include "boostplatform.h"
 
-BoostPlatform::BoostPlatform():BasePlatform(){
+BoostPlatform::BoostPlatform():BasePlatform()
+{
     setPlatform();
 }
 

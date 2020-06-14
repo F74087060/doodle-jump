@@ -14,6 +14,7 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent):
     connect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
     connect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
     connect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
+    connect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
 
     initPlayer();
     initPlatform();
@@ -54,11 +55,11 @@ void GameController::initPlayer()
 void GameController::initPlatform()
 {
     BasePlatform *platformPointer;
-    for(unsigned long i=0;i<128;i++){
-        platformPointer=randomPlatform();
+    for(unsigned long i=0;i<PLATFORM_ONSCREEN;i++){
+        i==0?platformPointer=new NormalPlatform:platformPointer=randomPlatform();
         plat.push_back(platformPointer);
-        plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH)
-                                  ,(VIEW_HEIGHT-plat.at(i)->getHeight())-static_cast<int>(i)*((VIEW_HEIGHT-plat.at(i)->getHeight())/8));
+        plat.at(i)->setCoordinate(i==0?VIEW_WIDTH/2-PLATFORM_WIDTH/2:rand()%(VIEW_WIDTH-PLATFORM_WIDTH)
+                                  ,(VIEW_HEIGHT-plat.at(i)->getHeight())-static_cast<int>(i)*((VIEW_HEIGHT-plat.at(i)->getHeight())/PLATFORM_ONSCREEN));
         plat.at(i)->setPos(plat.at(i)->X(),plat.at(i)->Y());
         platformList.append(plat.at(i));
     }
@@ -82,18 +83,26 @@ void GameController::movePlatform()
 
 void GameController::generatePlatform()
 {
-    std::vector<BasePlatform *>::iterator it=plat.begin();
-    for(unsigned long i=0;it!=plat.end();it++, i++){
-        if(plat.at(i)->y()>=VIEW_HEIGHT){
-            platformList.removeAt(static_cast<int>(i));
-            plat.at(i)=randomPlatform();
-            plat.at(i)->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),-1*15*(VIEW_HEIGHT-(VIEW_HEIGHT-plat.at(i)->getHeight())/8));
-            plat.at(i)->setPos(plat.at(i)->X(),plat.at(i)->Y());
-            platformList.append(plat.at(i));
-        }
+    if(plat.at(0)->y()>=VIEW_HEIGHT){
+        double temp=VIEW_HEIGHT-plat.at(0)->y();
+        platformList.removeAt(0);
+        plat.erase(plat.begin());
+        plat.push_back(randomPlatform());
+        plat.back()->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),-1*temp);
+        plat.back()->setPos(plat.back()->X(),plat.back()->Y());
+        platformList.append(plat.back());
     }
     scene.destroyItemGroup(platformGroup);
     platformGroup=scene.createItemGroup(platformList);
+}
+
+void GameController::gameOverSlot()
+{
+    disconnect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
+    disconnect(timer, SIGNAL(timeout()), this, SLOT(movePlatform()));
+    disconnect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
+
+    connect(this, SIGNAL(gameOver()), QApplication::activeWindow(), SLOT(close()));
 }
 
 bool GameController::eventFilter(QObject *object, QEvent *event)

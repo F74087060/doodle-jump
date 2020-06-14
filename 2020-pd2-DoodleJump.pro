@@ -31,8 +31,9 @@ SOURCES += \
     player.cpp \
     baseplatform.cpp \
     boostplatform.cpp \
-    normalclass.cpp \
-    randomplatform.cpp
+    randomplatform.cpp \
+    stopplatform.cpp \
+    normalplatform.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -42,7 +43,8 @@ HEADERS += \
     baseplatform.h \
     boostplatform.h \
     normalplatform.h \
-    randomplatform.h
+    randomplatform.h \
+    stopplatform.h
 
 FORMS += \
         mainwindow.ui

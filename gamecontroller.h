@@ -6,6 +6,7 @@
 
 #include <vector>
 
+#include <QApplication>
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QTimer>
@@ -14,6 +15,7 @@
 #include "define.h"
 #include "player.h"
 #include "randomplatform.h"
+#include "mainwindow.h"
 
 class GameController: public QObject
 {
@@ -35,9 +37,12 @@ private:
     QTimer *timer, *timer2;
 
     Player *player;
+signals:
+    void gameOver();
 public slots:
     void movePlatform();
     void generatePlatform();
+    void gameOverSlot();
 protected:
     bool eventFilter(QObject *object, QEvent *event);
     void advance(int phase);
