@@ -37,7 +37,8 @@ SOURCES += \
     button.cpp \
     hazards.cpp \
     ghost.cpp \
-    fallingplatform.cpp
+    fallingplatform.cpp \
+    projectile.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -52,7 +53,8 @@ HEADERS += \
     button.h \
     hazards.h \
     ghost.h \
-    fallingplatform.h
+    fallingplatform.h \
+    projectile.h
 
 FORMS += \
         mainwindow.ui

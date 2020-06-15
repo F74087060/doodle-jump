@@ -14,5 +14,7 @@
         <file>resource/playhover.png</file>
         <file>resource/ghost.png</file>
         <file>resource/fallingplatform.png</file>
+        <file>resource/player_shoot.png</file>
+        <file>resource/projectile.png</file>
     </qresource>
 </RCC>

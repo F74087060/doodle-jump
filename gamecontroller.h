@@ -22,6 +22,7 @@
 #include "mainwindow.h"
 #include "ghost.h"
 #include "fallingplatform.h"
+#include "projectile.h"
 
 class GameController: public QObject
 {
@@ -50,6 +51,7 @@ private:
     QGraphicsTextItem *label;
 
     Player *player;
+    Projectile *projectile;
     Ghost *ghost;
     FallingPlatform *fallingPlatform;
 
@@ -67,6 +69,7 @@ public slots:
     void generateGhost();
     void moveFallingPlatform();
     void generateFallingPlatform();
+    void checkProjectile();
     void addScore();
     void setScore();
     void gameOverSlot();

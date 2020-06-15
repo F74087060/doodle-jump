@@ -75,6 +75,15 @@ void GameController::handleKeyPressed(QKeyEvent *event)
                 paused=false;
             }
             break;
+        case Qt::Key_Space:
+            QPixmap pix;
+            pix.load(PLAYER_SHOOT_PATH);
+            player->setPixmap(pix.scaledToWidth(PLAYER_WIDTH));
+
+            projectile=new Projectile();
+            projectile->setPos(player->x()-5, player->y()-player->getPlayerHeight()/2);
+            scene.addItem(projectile);
+            break;
     }
 }
 
@@ -246,6 +255,11 @@ void GameController::generateFallingPlatform()
         fallingPlatform->setPos(rand()%(VIEW_WIDTH-PLATFORM_WIDTH)+PLATFORM_WIDTH,
                                -1*rand()%(VIEW_HEIGHT*FALLING_PLATFORM_RARITY));
     }
+}
+
+void GameController::checkProjectile()
+{
+
 }
 
 void GameController::addScore()

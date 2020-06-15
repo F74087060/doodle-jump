@@ -19,6 +19,8 @@
 #define BOOST_PLATFORM_PATH ":/resource/boostplatform.png"
 #define PLAYER_LEFT_PATH ":/resource/player_left.png"
 #define PLAYER_RIGHT_PATH ":/resource/player_right.png"
+#define PLAYER_SHOOT_PATH ":/resource/player_shoot.png"
+#define PROJECTILE_PATH ":/resource/projectile.png"
 #define GHOST_PATH ":/resource/ghost.png"
 #define FALLING_PLATFORM_PATH ":/resource/fallingplatform.png"
 #define PAUSE_MENU_PATH ":/resource/pause.png"
@@ -49,6 +51,7 @@ enum Data{
 enum objectType{
     PLATFORM,
     HAZARD,
+    PROJECTILE,
     NUMBER_OF_OBJECT
 };
 
