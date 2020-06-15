@@ -8,6 +8,9 @@
 #define GHOST_WIDTH 100
 #define GHOST_RARITY 3
 #define FALLING_PLATFORM_RARITY 15
+#define MULTIPLIER_RARITY 20
+#define SPRING_BOOTS_WIDTH 30
+#define SPRING_BOOTS_RARITY 50
 #define MOVE_RANGE 200
 #define PLATFORM_WIDTH 120
 #define PLATFORM_ONSCREEN 6
@@ -23,6 +26,12 @@
 #define PROJECTILE_PATH ":/resource/projectile.png"
 #define GHOST_PATH ":/resource/ghost.png"
 #define FALLING_PLATFORM_PATH ":/resource/fallingplatform.png"
+#define MULTIPLIER_PATH_1 ":/resource/multiplier1x.png"
+#define MULTIPLIER_PATH_3 ":/resource/multiplier2x.png"
+#define MULTIPLIER_PATH_5 ":/resource/multiplier5x.png"
+#define MULTIPLIER_PATH_10 ":/resource/multiplier10x.png"
+#define MULTIPLIER_PATH_200 ":/resource/multiplier.png"
+#define SPRING_BOOTS_PATH ":/resource/spring_boots.png"
 #define PAUSE_MENU_PATH ":/resource/pause.png"
 #define MAIN_MENU_PATH ":/resource/mainmenu.png"
 #define PLAY_PATH ":/resource/play.png"
@@ -45,6 +54,8 @@ enum Data{
     TYPE,
     PLATFORM_TYPE,
     HAZARD_TYPE,
+    PROJECTILE_TYPE,
+    GAMEPROPS_TYPE,
     NUMBER_OF_DATA
 };
 
@@ -52,6 +63,7 @@ enum objectType{
     PLATFORM,
     HAZARD,
     PROJECTILE,
+    GAMEPROPS,
     NUMBER_OF_OBJECT
 };
 
@@ -66,6 +78,12 @@ enum hazardType{
     GHOST,
     FALLING_PLATFORM,
     NUMBER_OF_HAZARD
+};
+
+enum gamePropsType{
+    MULTIPLIER,
+    SPRING_BOOTS,
+    NUMBER_OF_GAMEPROPS
 };
 
 #endif // DEFINE_H

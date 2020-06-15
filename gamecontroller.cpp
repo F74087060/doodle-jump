@@ -1,5 +1,4 @@
 #include "gamecontroller.h"
-#include <QDebug>
 
 GameController::GameController():
     tempScene(new QGraphicsScene(this)),
@@ -12,6 +11,7 @@ GameController::GameController():
 
 GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObject *parent):
     QObject(parent),
+    mul(new Multiplier()),
     scene(scene),
     pauseScene(new QGraphicsScene(this)),
     gameOverScene(new QGraphicsScene(this)),
@@ -21,8 +21,12 @@ GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObje
     player(new Player(*this)),
     ghost(new Ghost()),
     fallingPlatform(new FallingPlatform()),
+    springBoots(new SpringBoots()),
     score(0)
 {
+    dropTracker=false;
+
+    setMultiplier();
     srand(static_cast<unsigned>(time(nullptr)));
 
     scene.installEventFilter(this);
@@ -36,11 +40,7 @@ GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObje
     connect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
     connect(this, SIGNAL(scoreUpdated()), this, SLOT(setScore()));
 
-    initPlayer();
-    initPlatform();
-    initGhost();
-    initFallingPlatform();
-    initGameOverScene();
+    initialize();
     showScore();
 }
 
@@ -76,13 +76,15 @@ void GameController::handleKeyPressed(QKeyEvent *event)
             }
             break;
         case Qt::Key_Space:
-            QPixmap pix;
-            pix.load(PLAYER_SHOOT_PATH);
-            player->setPixmap(pix.scaledToWidth(PLAYER_WIDTH));
+            if(paused==false){
+                QPixmap pix;
+                pix.load(PLAYER_SHOOT_PATH);
+                player->setPixmap(pix.scaledToWidth(PLAYER_WIDTH));
 
-            projectile=new Projectile();
-            projectile->setPos(player->x()-5, player->y()-player->getPlayerHeight()/2);
-            scene.addItem(projectile);
+                projectile=new Projectile();
+                projectile->setPos(player->x()-5, player->y()-player->getPlayerHeight()/2);
+                scene.addItem(projectile);
+            }
             break;
     }
 }
@@ -99,6 +101,16 @@ void GameController::handleKeyRelease(QKeyEvent *event)
                 player->moveDirection(STOP);
             break;
     }
+}
+
+void GameController::initialize()
+{
+    initPlayer();
+    initPlatform();
+    initGhost();
+    initFallingPlatform();
+    initMultiplier();
+    initGameOverScene();
 }
 
 void GameController::initPlayer()
@@ -132,7 +144,14 @@ void GameController::initFallingPlatform()
 {
     scene.addItem(fallingPlatform);
     fallingPlatform->setPos(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),
-                           -1*rand()%(VIEW_HEIGHT*FALLING_PLATFORM_RARITY));
+                            -1*rand()%(VIEW_HEIGHT*FALLING_PLATFORM_RARITY));
+}
+
+void GameController::initMultiplier()
+{
+    scene.addItem(mul);
+    mul->setPos(rand()%(VIEW_WIDTH-GHOST_WIDTH),
+                        -1*rand()%(VIEW_HEIGHT*MULTIPLIER_RARITY));
 }
 
 void GameController::initGameOverScene()
@@ -147,6 +166,15 @@ void GameController::showScore()
     label->setPos(OFFSET,OFFSET);
     label->setZValue(2);
     scene.addItem(label);
+}
+
+void GameController::setMultiplier()
+{
+    multiplier[0]=1;
+    multiplier[1]=3;
+    multiplier[2]=5;
+    multiplier[3]=10;
+    multiplier[4]=200;
 }
 
 void GameController::setScore()
@@ -168,6 +196,8 @@ void GameController::moveCamera()
         }
         ghost->setY(ghost->y()+player->getDeltaY());
         fallingPlatform->setY(fallingPlatform->y()+player->getDeltaY());
+        mul->setY(mul->y()+player->getDeltaY());
+        springBoots->setY(springBoots->y()+player->getDeltaY());
         addScore();
     }
 }
@@ -179,10 +209,15 @@ void GameController::entityMovementGeneration()
     generateGhost();
     moveFallingPlatform();
     generateFallingPlatform();
+    generateMultiplier();
+    removeSpringBoots();
 }
 
 void GameController::generatePlatform()
 {
+    bool withBoots;
+    withBoots=(rand()%SPRING_BOOTS_RARITY==0);
+
     if(plat.at(0)->y()>=VIEW_HEIGHT){
         double temp=VIEW_HEIGHT-plat.at(0)->y();
         platformList.removeAt(0);
@@ -190,6 +225,11 @@ void GameController::generatePlatform()
         plat.push_back(randomPlatform());
         plat.back()->setCoordinate(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),-1*temp);
         plat.back()->setPos(plat.back()->X(),plat.back()->Y());
+        if(withBoots&&bootsNotInScene){
+            springBoots->setPos(plat.back()->x()+PLATFORM_WIDTH/2-SPRING_BOOTS_WIDTH/2,plat.back()->y()-OFFSET*2);
+            scene.addItem(springBoots);
+            bootsNotInScene=false;
+        }
         platformList.append(plat.back());
     }
     scene.destroyItemGroup(platformGroup);
@@ -252,19 +292,30 @@ void GameController::moveFallingPlatform()
 void GameController::generateFallingPlatform()
 {
     if(fallingPlatform->y()>=VIEW_HEIGHT+OFFSET){
-        fallingPlatform->setPos(rand()%(VIEW_WIDTH-PLATFORM_WIDTH)+PLATFORM_WIDTH,
+        fallingPlatform->setPos(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),
                                -1*rand()%(VIEW_HEIGHT*FALLING_PLATFORM_RARITY));
     }
 }
 
-void GameController::checkProjectile()
+void GameController::generateMultiplier()
 {
+    if(mul->y()>=VIEW_HEIGHT+OFFSET){
+        mul->setPos(rand()%(VIEW_WIDTH-GHOST_WIDTH),
+                    -1*rand()%(VIEW_HEIGHT*MULTIPLIER_RARITY));
+    }
+}
 
+void GameController::removeSpringBoots()
+{
+    if(springBoots->y()>=VIEW_HEIGHT+OFFSET&&bootsNotInScene==false){
+        scene.removeItem(springBoots);
+        bootsNotInScene=true;
+    }
 }
 
 void GameController::addScore()
 {
-    score+=player->getDeltaY();
+    score+=player->getDeltaY()*multiplier[(mul->count)<4?mul->count:4];
     emit scoreUpdated();
 }
 
@@ -290,6 +341,7 @@ void GameController::gameOverSlot()
     gameOverScene->addItem(label2);
 
     Button *menuButton = new Button(MENU_PATH, MENU_HOVER_PATH);
+    menuButton->setZValue(4);
     gameOverScene->addItem(menuButton);
     menuButton->setPos(3*VIEW_WIDTH/4-BUTTON_WIDTH/2, 575);
 

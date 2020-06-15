@@ -1,5 +1,6 @@
 #include "player.h"
 #include "gamecontroller.h"
+#include <QDebug>
 
 Player::Player(GameController &controller):
     controller(controller),
@@ -71,10 +72,60 @@ bool Player::collidesWithHazard()
     else{
         foreach(QGraphicsItem *collidingItem, collisions){
             if(collidingItem->data(TYPE)==HAZARD){
+                if(currentDirection==DOWN){
+                    jump();
+                    if(collidingItem->data(HAZARD_TYPE)==GHOST){
+                        scene()->removeItem(collidingItem);
+                        Ghost *ghost=static_cast<Ghost *>(collidingItem);
+                        ghost->minX=-1*rand()%MOVE_RANGE;
+                        ghost->maxX=-1*ghost->minX;
+                        ghost->speed=rand()%3+1;
+                        ghost->setY(-1*((rand()%(VIEW_HEIGHT*GHOST_RARITY)-OFFSET)));
+                        ghost->setPos(rand()%(VIEW_WIDTH/2-GHOST_WIDTH/2)+(VIEW_WIDTH/4-GHOST_WIDTH/2),
+                                      -1*rand()%(VIEW_HEIGHT*GHOST_RARITY)-VIEW_HEIGHT);
+                        scene()->addItem(collidingItem);
+                    }
+                    else if(collidingItem->data(HAZARD_TYPE)==FALLING_PLATFORM){
+                        scene()->removeItem(collidingItem);
+                        collidingItem->setPos(rand()%(VIEW_WIDTH-PLATFORM_WIDTH)+PLATFORM_WIDTH,
+                                               -1*rand()%(VIEW_HEIGHT*FALLING_PLATFORM_RARITY));
+                        scene()->addItem(collidingItem);
+                    }
+                    return false;
+                }
                 return true;
             }
         }
         return false;
+    }
+}
+
+void Player::collidesWithMultiplier()
+{
+    QList<QGraphicsItem *> collisions=this->collidingItems();
+    if(scene()->collidingItems(this).isEmpty()){
+        return;
+    }
+    else{
+        foreach(QGraphicsItem *collidingItem, collisions){
+            if(collidingItem->data(TYPE)==GAMEPROPS){
+                if(collidingItem->data(GAMEPROPS_TYPE)==MULTIPLIER){
+                    controller.mul->incrementCount();
+                    if(controller.mul->count>=5){
+                        scene()->removeItem(controller.mul);
+                    }
+                    else{
+                        collidingItem->setPos(rand()%(VIEW_WIDTH-GHOST_WIDTH)+GHOST_WIDTH,
+                                               -1*rand()%(VIEW_HEIGHT*MULTIPLIER_RARITY));
+                    }
+                }
+                else if(collidingItem->data(GAMEPROPS_TYPE)==SPRING_BOOTS){
+                    springBootsFactor==2?springBootsFactor=1:springBootsFactor=2;
+                    scene()->removeItem(collidingItem);
+                    controller.bootsNotInScene=true;
+                }
+            }
+        }
     }
 }
 
@@ -86,7 +137,7 @@ double Player::getDeltaY() const
 void Player::jump()
 {
     setFall(UP);
-    deltaY=initialVelocity*boostFactor;
+    deltaY=initialVelocity*boostFactor*springBootsFactor;
 }
 
 void Player::setFall(verticalDirection direction)
@@ -200,4 +251,5 @@ void Player::advance(int phase)
     if(collidesWithHazard()){
         emit controller.gameOver();
     }
+    collidesWithMultiplier();
 }

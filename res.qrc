@@ -16,5 +16,11 @@
         <file>resource/fallingplatform.png</file>
         <file>resource/player_shoot.png</file>
         <file>resource/projectile.png</file>
+        <file>resource/multiplier.png</file>
+        <file>resource/multiplier1x.png</file>
+        <file>resource/multiplier2x.png</file>
+        <file>resource/multiplier5x.png</file>
+        <file>resource/multiplier10x.png</file>
+        <file>resource/spring_boots.png</file>
     </qresource>
 </RCC>

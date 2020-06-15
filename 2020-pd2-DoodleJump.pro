@@ -38,7 +38,10 @@ SOURCES += \
     hazards.cpp \
     ghost.cpp \
     fallingplatform.cpp \
-    projectile.cpp
+    projectile.cpp \
+    gameprops.cpp \
+    multiplier.cpp \
+    springboots.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,7 +57,10 @@ HEADERS += \
     hazards.h \
     ghost.h \
     fallingplatform.h \
-    projectile.h
+    projectile.h \
+    gameprops.h \
+    multiplier.h \
+    springboots.h
 
 FORMS += \
         mainwindow.ui

@@ -21,6 +21,7 @@ public:
     bool checkMovingDirection(horizontalDirection direction);
     bool collidesWithPlatform();
     bool collidesWithHazard();
+    void collidesWithMultiplier();
     double getDeltaY() const;
     void jump();
     void setDeltaY(double value);
@@ -41,6 +42,7 @@ private:
     const double initialVelocity, gravity;
     double deltaY=25;
     int boostFactor=1;
+    int springBootsFactor=1;
 signals:
     void upSignal();
     void downSignal();

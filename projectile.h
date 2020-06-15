@@ -6,6 +6,7 @@
 #include <QTimer>
 
 #include "define.h"
+#include "ghost.h"
 
 class Projectile: public QObject, public QGraphicsPixmapItem
 {

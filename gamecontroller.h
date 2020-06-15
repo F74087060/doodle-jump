@@ -23,6 +23,8 @@
 #include "ghost.h"
 #include "fallingplatform.h"
 #include "projectile.h"
+#include "multiplier.h"
+#include "springboots.h"
 
 class GameController: public QObject
 {
@@ -33,16 +35,22 @@ public:
     QGraphicsItemGroup *platformGroup;
 
     std::vector<BasePlatform *> plat;
+    Multiplier *mul;
+
+    bool bootsNotInScene=true;
 private:
     void handleKeyPressed(QKeyEvent *event);
     void handleKeyRelease(QKeyEvent *event);
 
+    void initialize();
     void initPlayer();
     void initPlatform();
     void initGhost();
     void initFallingPlatform();
+    void initMultiplier();
     void initGameOverScene();
     void showScore();
+    void setMultiplier();
 
     QGraphicsScene *tempScene, &scene, *pauseScene, *gameOverScene;
     QGraphicsView *tempView, &view;
@@ -54,10 +62,11 @@ private:
     Projectile *projectile;
     Ghost *ghost;
     FallingPlatform *fallingPlatform;
+    SpringBoots *springBoots;
 
     bool paused=false;
     double fallingPlatformSpeed;
-    int score;
+    int score, multiplier[5];
 signals:
     void gameOver();
     void scoreUpdated();
@@ -69,7 +78,8 @@ public slots:
     void generateGhost();
     void moveFallingPlatform();
     void generateFallingPlatform();
-    void checkProjectile();
+    void generateMultiplier();
+    void removeSpringBoots();
     void addScore();
     void setScore();
     void gameOverSlot();

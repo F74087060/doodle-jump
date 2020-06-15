@@ -8,5 +8,6 @@
 #include "boostplatform.h"
 
 BasePlatform *randomPlatform();
+extern bool dropTracker;
 
 #endif // GENERATEPLATFORM_H
