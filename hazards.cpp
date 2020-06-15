@@ -4,6 +4,8 @@ Hazards::Hazards()
 {
     setShapeMode(QGraphicsPixmapItem::HeuristicMaskShape);
     setData(TYPE, HAZARD);
+
+    setZValue(1);
 }
 
 Hazards::~Hazards()

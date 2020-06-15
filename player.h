@@ -19,7 +19,8 @@ public:
 
     void moveDirection(horizontalDirection direction);
     bool checkMovingDirection(horizontalDirection direction);
-    bool collidesWithPlayer();
+    bool collidesWithPlatform();
+    bool collidesWithHazard();
     double getDeltaY() const;
     void jump();
     void setDeltaY(double value);
@@ -27,8 +28,9 @@ public:
     qreal getDistanceToGround() const;
     verticalDirection getCurrentDirection() const;
     qreal getPlayerHeight() const;
-    double previousY;
+    double getGravity() const;
 
+    double previousY;
 private:
     GameController &controller;
 

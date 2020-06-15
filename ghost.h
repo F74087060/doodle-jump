@@ -1,6 +1,8 @@
 #ifndef GHOST_H
 #define GHOST_H
 
+#include <cstdlib>
+
 #include "hazards.h"
 
 class Ghost: public QObject, public Hazards
@@ -14,8 +16,9 @@ public:
     void setDirection(horizontalDirection direction);
 
     horizontalDirection currentDirection;
-    const qreal minX, maxX;
-    qreal now;
+    qreal minX, maxX, now;
+
+    int speed;
 signals:
     void leftSignal();
     void rightSignal();

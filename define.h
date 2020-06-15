@@ -5,7 +5,9 @@
 #define VIEW_HEIGHT 800
 #define BUTTON_WIDTH 175
 #define PLAYER_WIDTH 120
-#define GHOST_WIDTH 50
+#define GHOST_WIDTH 100
+#define GHOST_RARITY 3
+#define FALLING_PLATFORM_RARITY 15
 #define MOVE_RANGE 200
 #define PLATFORM_WIDTH 120
 #define PLATFORM_ONSCREEN 6
@@ -18,6 +20,7 @@
 #define PLAYER_LEFT_PATH ":/resource/player_left.png"
 #define PLAYER_RIGHT_PATH ":/resource/player_right.png"
 #define GHOST_PATH ":/resource/ghost.png"
+#define FALLING_PLATFORM_PATH ":/resource/fallingplatform.png"
 #define PAUSE_MENU_PATH ":/resource/pause.png"
 #define MAIN_MENU_PATH ":/resource/mainmenu.png"
 #define PLAY_PATH ":/resource/play.png"
@@ -58,6 +61,7 @@ enum platformType{
 
 enum hazardType{
     GHOST,
+    FALLING_PLATFORM,
     NUMBER_OF_HAZARD
 };
 

@@ -36,7 +36,8 @@ SOURCES += \
     normalplatform.cpp \
     button.cpp \
     hazards.cpp \
-    ghost.cpp
+    ghost.cpp \
+    fallingplatform.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -50,7 +51,8 @@ HEADERS += \
     stopplatform.h \
     button.h \
     hazards.h \
-    ghost.h
+    ghost.h \
+    fallingplatform.h
 
 FORMS += \
         mainwindow.ui

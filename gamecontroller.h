@@ -10,8 +10,10 @@
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QGraphicsTextItem>
 #include <QTimer>
 #include <QList>
+#include <QFont>
 
 #include "define.h"
 #include "player.h"
@@ -19,11 +21,13 @@
 #include "button.h"
 #include "mainwindow.h"
 #include "ghost.h"
+#include "fallingplatform.h"
 
 class GameController: public QObject
 {
     Q_OBJECT
 public:
+    GameController();
     GameController(QGraphicsScene &scene, QGraphicsView &view, QObject *parent=nullptr);
     QGraphicsItemGroup *platformGroup;
 
@@ -34,23 +38,37 @@ private:
 
     void initPlayer();
     void initPlatform();
+    void initGhost();
+    void initFallingPlatform();
     void initGameOverScene();
+    void showScore();
 
-    QGraphicsScene &scene, *pauseScene, *gameOverScene;
-    QGraphicsView &view;
+    QGraphicsScene *tempScene, &scene, *pauseScene, *gameOverScene;
+    QGraphicsView *tempView, &view;
     QList<QGraphicsItem *> platformList;
-    QTimer *timer, *timer2;
+    QTimer *timer;
+    QGraphicsTextItem *label;
 
     Player *player;
     Ghost *ghost;
+    FallingPlatform *fallingPlatform;
 
     bool paused=false;
+    double fallingPlatformSpeed;
+    int score;
 signals:
     void gameOver();
+    void scoreUpdated();
 public slots:
     void moveCamera();
+    void entityMovementGeneration();
     void generatePlatform();
     void moveGhost();
+    void generateGhost();
+    void moveFallingPlatform();
+    void generateFallingPlatform();
+    void addScore();
+    void setScore();
     void gameOverSlot();
 protected:
     bool eventFilter(QObject *object, QEvent *event);

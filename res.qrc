@@ -13,5 +13,6 @@
         <file>resource/play.png</file>
         <file>resource/playhover.png</file>
         <file>resource/ghost.png</file>
+        <file>resource/fallingplatform.png</file>
     </qresource>
 </RCC>

@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     scene(new QGraphicsScene(this)),
     sceneMain(new QGraphicsScene(this)),
     view(new QGraphicsView(this)),
-    controller(new GameController(*scene, *view, this))
+    controller(new GameController())
 {
     initScene();
     showMainMenu();

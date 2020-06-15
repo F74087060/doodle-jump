@@ -1,6 +1,15 @@
 #include "gamecontroller.h"
 #include <QDebug>
 
+GameController::GameController():
+    tempScene(new QGraphicsScene(this)),
+    scene(*tempScene),
+    tempView(new QGraphicsView()),
+    view(*tempView)
+{
+
+}
+
 GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObject *parent):
     QObject(parent),
     scene(scene),
@@ -8,8 +17,11 @@ GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObje
     gameOverScene(new QGraphicsScene(this)),
     view(view),
     timer(new QTimer(this)),
+    label(new QGraphicsTextItem),
     player(new Player(*this)),
-    ghost(new Ghost())
+    ghost(new Ghost()),
+    fallingPlatform(new FallingPlatform()),
+    score(0)
 {
     srand(static_cast<unsigned>(time(nullptr)));
 
@@ -18,17 +30,18 @@ GameController::GameController(QGraphicsScene &scene, QGraphicsView &view, QObje
     timer->start(16);
     connect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
     connect(timer, SIGNAL(timeout()), this, SLOT(moveCamera()));
-    connect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
-    connect(timer, SIGNAL(timeout()), this, SLOT(moveGhost()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(entityMovementGeneration()));
     connect(timer, SIGNAL(timeout()), ghost, SLOT(moveLeft()));
     connect(timer, SIGNAL(timeout()), ghost, SLOT(moveRight()));
     connect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
+    connect(this, SIGNAL(scoreUpdated()), this, SLOT(setScore()));
 
     initPlayer();
     initPlatform();
+    initGhost();
+    initFallingPlatform();
     initGameOverScene();
-    scene.addItem(ghost);
-    ghost->setPos(VIEW_WIDTH/2-GHOST_WIDTH/2,100);
+    showScore();
 }
 
 void GameController::handleKeyPressed(QKeyEvent *event)
@@ -44,7 +57,9 @@ void GameController::handleKeyPressed(QKeyEvent *event)
             if(paused==false){
                 disconnect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
                 disconnect(timer, SIGNAL(timeout()), this, SLOT(moveCamera()));
-                disconnect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
+                disconnect(timer, SIGNAL(timeout()), this, SLOT(entityMovementGeneration()));
+                disconnect(timer, SIGNAL(timeout()), ghost, SLOT(moveLeft()));
+                disconnect(timer, SIGNAL(timeout()), ghost, SLOT(moveRight()));
                 disconnect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
 
                 paused=true;
@@ -52,7 +67,9 @@ void GameController::handleKeyPressed(QKeyEvent *event)
             else{
                 connect(timer, SIGNAL(timeout()), &scene, SLOT(advance()));
                 connect(timer, SIGNAL(timeout()), this, SLOT(moveCamera()));
-                connect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
+                connect(timer, SIGNAL(timeout()), this, SLOT(entityMovementGeneration()));
+                connect(timer, SIGNAL(timeout()), ghost, SLOT(moveLeft()));
+                connect(timer, SIGNAL(timeout()), ghost, SLOT(moveRight()));
                 connect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
 
                 paused=false;
@@ -95,9 +112,37 @@ void GameController::initPlatform()
     platformGroup=scene.createItemGroup(platformList);
 }
 
+void GameController::initGhost()
+{
+    scene.addItem(ghost);
+    ghost->setPos(rand()%(VIEW_WIDTH/2-GHOST_WIDTH/2)+(VIEW_WIDTH/4-GHOST_WIDTH/2),
+                  -1*rand()%(VIEW_HEIGHT*GHOST_RARITY)-VIEW_HEIGHT);
+}
+
+void GameController::initFallingPlatform()
+{
+    scene.addItem(fallingPlatform);
+    fallingPlatform->setPos(rand()%(VIEW_WIDTH-PLATFORM_WIDTH),
+                           -1*rand()%(VIEW_HEIGHT*FALLING_PLATFORM_RARITY));
+}
+
 void GameController::initGameOverScene()
 {
     gameOverScene->setBackgroundBrush(QBrush(QImage(BACKGROUND_PATH)));
+}
+
+void GameController::showScore()
+{
+    label->setFont(QFont("courier", 35));
+    label->setDefaultTextColor(Qt::black);
+    label->setPos(OFFSET,OFFSET);
+    label->setZValue(2);
+    scene.addItem(label);
+}
+
+void GameController::setScore()
+{
+    label->setPlainText(QString::number(score));
 }
 
 void GameController::moveCamera()
@@ -113,7 +158,18 @@ void GameController::moveCamera()
             }
         }
         ghost->setY(ghost->y()+player->getDeltaY());
+        fallingPlatform->setY(fallingPlatform->y()+player->getDeltaY());
+        addScore();
     }
+}
+
+void GameController::entityMovementGeneration()
+{
+    generatePlatform();
+    moveGhost();
+    generateGhost();
+    moveFallingPlatform();
+    generateFallingPlatform();
 }
 
 void GameController::generatePlatform()
@@ -152,10 +208,10 @@ void GameController::moveGhost()
     }
 
     if(ghost->now>0){
-        ghost->setX(ghost->x()-1);
+        ghost->setX(ghost->x()-ghost->speed);
     }
     else {
-        ghost->setX(ghost->x()+1);
+        ghost->setX(ghost->x()+ghost->speed);
     }
 
     if(ghost->x()>=VIEW_WIDTH-GHOST_WIDTH/2){
@@ -167,11 +223,57 @@ void GameController::moveGhost()
 
 }
 
+void GameController::generateGhost()
+{
+    if(ghost->y()>=VIEW_HEIGHT+OFFSET){
+        ghost->minX=-1*rand()%MOVE_RANGE;
+        ghost->maxX=-1*ghost->minX;
+        ghost->speed=rand()%3+1;
+        ghost->setY(-1*((rand()%(VIEW_HEIGHT*GHOST_RARITY)-OFFSET)));
+        ghost->setPos(rand()%(VIEW_WIDTH/2-GHOST_WIDTH/2)+(VIEW_WIDTH/4-GHOST_WIDTH/2),
+                      -1*rand()%(VIEW_HEIGHT*GHOST_RARITY)-VIEW_HEIGHT);
+    }
+}
+
+void GameController::moveFallingPlatform()
+{
+    fallingPlatform->setY(fallingPlatform->y()+10);
+}
+
+void GameController::generateFallingPlatform()
+{
+    if(fallingPlatform->y()>=VIEW_HEIGHT+OFFSET){
+        fallingPlatform->setPos(rand()%(VIEW_WIDTH-PLATFORM_WIDTH)+PLATFORM_WIDTH,
+                               -1*rand()%(VIEW_HEIGHT*FALLING_PLATFORM_RARITY));
+    }
+}
+
+void GameController::addScore()
+{
+    score+=player->getDeltaY();
+    emit scoreUpdated();
+}
+
 void GameController::gameOverSlot()
 {
     disconnect(this, SIGNAL(gameOver()), this, SLOT(gameOverSlot()));
     disconnect(timer, SIGNAL(timeout()), this, SLOT(moveCamera()));
     disconnect(timer, SIGNAL(timeout()), this, SLOT(generatePlatform()));
+
+    label->setFont(QFont("courier", 100));
+    label->setDefaultTextColor(Qt::black);
+    label->setPos(OFFSET,OFFSET+80);
+    label->setZValue(2);
+    label->setTextWidth(VIEW_WIDTH-OFFSET/2);
+    gameOverScene->addItem(label);
+
+    QGraphicsTextItem *label2=new QGraphicsTextItem();
+    label2->setFont(QFont("courier", 70));
+    label2->setDefaultTextColor(Qt::red);
+    label2->setPos(OFFSET,OFFSET);
+    label2->setZValue(2);
+    label2->setPlainText("gameover");
+    gameOverScene->addItem(label2);
 
     Button *menuButton = new Button(MENU_PATH, MENU_HOVER_PATH);
     gameOverScene->addItem(menuButton);

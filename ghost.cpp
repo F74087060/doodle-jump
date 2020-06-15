@@ -2,10 +2,14 @@
 
 Ghost::Ghost():Hazards(),
     currentDirection(RIGHT),
-    minX(-1*MOVE_RANGE),
-    maxX(MOVE_RANGE),
-    now(0)
+    now(0),
+    speed(1)
 {
+    srand(static_cast<unsigned>(time(nullptr)));
+
+    minX=-1*rand()%MOVE_RANGE;
+    maxX=-1*minX;
+
     connect(this, SIGNAL(leftSignal()), this, SLOT(moveLeft()));
     connect(this, SIGNAL(rightSignal()), this, SLOT(moveRight()));
 

@@ -14,7 +14,7 @@ Player::Player(GameController &controller):
     connect(this, SIGNAL(rightSignal()), this, SLOT(moveRight()));
 
     setShapeMode(QGraphicsPixmapItem::HeuristicMaskShape);
-    setZValue(1);
+    setZValue(2);
 
     deltaY=initialVelocity;
     QPixmap pix;
@@ -38,7 +38,7 @@ bool Player::checkMovingDirection(horizontalDirection direction)
     return (direction==movingDirection)?true:false;
 }
 
-bool Player::collidesWithPlayer()
+bool Player::collidesWithPlatform()
 {
     QList<QGraphicsItem *> collisions=this->collidingItems();
     if(scene()->collidingItems(this).isEmpty()){
@@ -46,9 +46,6 @@ bool Player::collidesWithPlayer()
     }
     else{
         foreach(QGraphicsItem *collidingItem, collisions){
-            if(collidingItem->data(TYPE)==HAZARD){
-                emit controller.gameOver();
-            }
             if(collidingItem->data(TYPE)==PLATFORM&&collidingItem->y()-playerHeight+OFFSET>=y()){
                     distanceToGround=VIEW_HEIGHT-collidingItem->y();
                     previousY=static_cast<BasePlatform *>(collidingItem)->Y();
@@ -58,6 +55,22 @@ bool Player::collidesWithPlayer()
                         boostFactor=2;
                     else
                         boostFactor=1;
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+bool Player::collidesWithHazard()
+{
+    QList<QGraphicsItem *> collisions=this->collidingItems();
+    if(scene()->collidingItems(this).isEmpty()){
+        return false;
+    }
+    else{
+        foreach(QGraphicsItem *collidingItem, collisions){
+            if(collidingItem->data(TYPE)==HAZARD){
                 return true;
             }
         }
@@ -100,6 +113,11 @@ verticalDirection Player::getCurrentDirection() const
 qreal Player::getPlayerHeight() const
 {
     return playerHeight;
+}
+
+double Player::getGravity() const
+{
+    return gravity;
 }
 
 void Player::setDeltaY(double value)
@@ -156,13 +174,14 @@ void Player::advance(int phase)
     if(!phase){
         return;
     }
+
     switch(currentDirection){
         case UP:
             emit upSignal();
             break;
         case DOWN:
             emit downSignal();
-            if(collidesWithPlayer()){
+            if(collidesWithPlatform()){
                 jump();
             }
             break;
@@ -176,5 +195,9 @@ void Player::advance(int phase)
             break;
         case STOP:
             break;
+    }
+
+    if(collidesWithHazard()){
+        emit controller.gameOver();
     }
 }
