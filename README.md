@@ -7,9 +7,9 @@ Spacebar to shoot
 
 Escape or [P] to pause
 ## Requirements
-### Player can jump automatically across the boundary done
+### [ Done ] Player can jump automatically across the boundary
 
-### At least two kinds of platforms done
+### [ Done ] At least two kinds of platforms
 - Green Platform
   - Normal Platform
 - Blue Platform
@@ -17,13 +17,13 @@ Escape or [P] to pause
 - Yellow Platform
   - Stops Player from jumping
 
-### At least two kinds of game props done
+### [ Done ]At least two kinds of game props done
 - Various doodle icons
   - Score Multiplier
 - Spring Boots icon
   - Equip/Unequip double jump boots ( stacks with platform )
 
-### Hazards
+### [ Done ]Hazards
 - Monster done
   - White Doodler Doodle
 - Player can shoot bullets to blast the monster done
@@ -34,14 +34,14 @@ Escape or [P] to pause
 - Eliminate/Avoid one hazard someway
   - Player can jump on hazards ( including red platform ) to kill them
 
-### Can play the game infinitely until the player died done
-### Can pause the game done
-### Show the player's score during the game done
+### [ Done ]Can play the game infinitely until the player died done
+### [ Done ]Can pause the game done
+### [ Done ]Show the player's score during the game done
 - Score is shown at upper left side of the screen
   - Score is incremented by distance travelled
 
-### Show GAME OVER and final score when the player died done
-### Platforms' classes should use polymorphism done
+### [ Done ]Show GAME OVER and final score when the player died done
+### [ Done ]Platforms' classes should use polymorphism done
 - Has a base class
 - Derived class overrides a pure virtual function
 - Base class pointer is used to generate platform type randomly
